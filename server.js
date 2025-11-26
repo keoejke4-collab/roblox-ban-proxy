@@ -69,12 +69,13 @@ app.post('/ban', verifySecretKey, async (req, res) => {
   }
   
   try {
+    // CORRECTION : Utiliser POST au lieu de PATCH pour créer un nouveau ban
     const url = `${API_BASE}/universes/${universeId}/user-restrictions`;
     const requestBody = {
       user: `users/${userId}`,
       gameJoinRestriction: {
         active: true,
-        duration: duration || 0,
+        duration: duration || "0s", // Format string avec "s" pour secondes
         privateReason: reason || 'Banned by admin',
         displayReason: reason || 'You have been banned from this experience'
       }
@@ -84,7 +85,8 @@ app.post('/ban', verifySecretKey, async (req, res) => {
     console.log('📦 Request Body:', JSON.stringify(requestBody, null, 2));
     console.log('🔑 API Key (first 20 chars):', API_KEY ? API_KEY.substring(0, 20) + '...' : 'MISSING');
     
-    const response = await axios.patch(url, requestBody, {
+    // Utiliser POST au lieu de PATCH
+    const response = await axios.post(url, requestBody, {
       headers: {
         'x-api-key': API_KEY,
         'Content-Type': 'application/json'
