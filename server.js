@@ -69,26 +69,31 @@ app.post('/ban', verifySecretKey, async (req, res) => {
   }
   
   try {
-    const response = await axios.patch(
-      `${API_BASE}/universes/${universeId}/user-restrictions`,
-      {
-        user: `users/${userId}`,
-        gameJoinRestriction: {
-          active: true,
-          duration: duration || 0,
-          privateReason: reason || 'Banned by admin',
-          displayReason: reason || 'You have been banned from this experience'
-        }
-      },
-      {
-        headers: {
-          'x-api-key': API_KEY,
-          'Content-Type': 'application/json'
-        }
+    const url = `${API_BASE}/universes/${universeId}/user-restrictions`;
+    const requestBody = {
+      user: `users/${userId}`,
+      gameJoinRestriction: {
+        active: true,
+        duration: duration || 0,
+        privateReason: reason || 'Banned by admin',
+        displayReason: reason || 'You have been banned from this experience'
       }
-    );
+    };
+    
+    console.log('🔗 API URL:', url);
+    console.log('📦 Request Body:', JSON.stringify(requestBody, null, 2));
+    console.log('🔑 API Key (first 20 chars):', API_KEY ? API_KEY.substring(0, 20) + '...' : 'MISSING');
+    
+    const response = await axios.patch(url, requestBody, {
+      headers: {
+        'x-api-key': API_KEY,
+        'Content-Type': 'application/json'
+      }
+    });
     
     console.log('✅ Player banned successfully:', userId);
+    console.log('📨 API Response:', JSON.stringify(response.data, null, 2));
+    
     res.json({ 
       success: true, 
       message: 'Player banned successfully',
@@ -96,7 +101,13 @@ app.post('/ban', verifySecretKey, async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ Ban error:', error.response?.data || error.message);
+    console.error('❌ Ban error details:');
+    console.error('  Status:', error.response?.status);
+    console.error('  Status Text:', error.response?.statusText);
+    console.error('  Headers:', error.response?.headers);
+    console.error('  Data:', JSON.stringify(error.response?.data, null, 2));
+    console.error('  Message:', error.message);
+    
     res.status(error.response?.status || 500).json({ 
       success: false, 
       error: error.response?.data || error.message 
