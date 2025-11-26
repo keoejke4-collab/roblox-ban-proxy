@@ -1,0 +1,16 @@
+{
+  "name": "roblox-ban-api-proxy",
+  "version": "1.0.0",
+  "description": "Proxy server for Roblox Open Cloud Ban API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
